@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作业提交</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            background: #fafafa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .card {
+            width: 100%;
+            max-width: 420px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+        
+        .header {
+            padding: 32px 32px 24px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            position: relative;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: #fff;
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .header h1 {
+            color: #fff;
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+        .header p {
+            color: rgba(255,255,255,0.8);
+            font-size: 13px;
+            margin-top: 6px;
+        }
+        
+        .body {
+            padding: 16px 32px 32px;
+        }
+        
+        .row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .field {
+            flex: 1;
+        }
+        
+        .field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: #64748b;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .field input[type="text"] {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            color: #1e293b;
+            transition: all 0.2s;
+        }
+        
+        .field input[type="text"]:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+        
+        .field input[type="text"]::placeholder {
+            color: #cbd5e1;
+        }
+        
+        .upload-area {
+            margin: 20px 0;
+            padding: 32px 20px;
+            border: 2px dashed #e2e8f0;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .upload-area:hover {
+            border-color: #6366f1;
+            background: #faf5ff;
+        }
+        
+        .upload-area input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .upload-icon::before {
+            content: '↑';
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .upload-text {
+            font-size: 14px;
+            color: #475569;
+            font-weight: 500;
+        }
+        
+        .upload-hint {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(99,102,241,0.35);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="header">
+            <h1>作业提交</h1>
+            <p>Homework Submission</p>
+        </div>
+        
+        <form action="upload" method="post" enctype="multipart/form-data">
+            <div class="body">
+                <div class="row">
+                    <div class="field">
+                        <label>学号</label>
+                        <input type="text" name="studentId" placeholder="输入学号" required>
+                    </div>
+                    <div class="field">
+                        <label>姓名</label>
+                        <input type="text" name="studentName" placeholder="输入姓名" required>
+                    </div>
+                </div>
+                
+                <div class="upload-area">
+                    <input type="file" name="files" multiple>
+                    <div class="upload-icon"></div>
+                    <div class="upload-text">点击或拖拽上传文件</div>
+                    <div class="upload-hint">支持多文件同时上传</div>
+                </div>
+                
+                <button type="submit" class="submit-btn">提 交</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,11 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<nav class="nav">
+  <ul>
+    <li><a href="index.jsp" class="${param.page == 'index' || empty param.page ? 'active' : ''}">首页</a></li>
+    <li><a href="scenic.jsp" class="${param.page == 'scenic' ? 'active' : ''}">景点介绍</a></li>
+    <li><a href="culture.jsp" class="${param.page == 'culture' ? 'active' : ''}">文化底蕴</a></li>
+    <li><a href="routes.jsp" class="${param.page == 'routes' ? 'active' : ''}">游览路线</a></li>
+    <li><a href="about.jsp" class="${param.page == 'about' ? 'active' : ''}">关于我们</a></li>
+    <li><a href="contact.jsp" class="${param.page == 'contact' ? 'active' : ''}">联系方式</a></li>
+  </ul>
+</nav>

@@ -1,0 +1,5 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<div style="padding: 15px 0; margin-bottom: 30px; border-bottom: 1px solid #f0f0f0;">
+    <h2 style="color: #1a1a1a; font-weight: 300; font-size: 1.3em; margin: 0;">Image Gallery Module</h2>
+    <p style="color: #666; font-size: 0.9em; margin: 5px 0 0 0;">Demonstrating JSP Include Directives</p>
+</div>

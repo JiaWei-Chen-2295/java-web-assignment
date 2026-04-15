@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"D:/a_my_project/java-web/ch09/src/main/java/fun/javierchen/ch09\")",
+      "Bash(mkdir -p \"D:/a_my_project/java-web/ch09/src/main/webapp/WEB-INF\")",
+      "Bash(mkdir -p \"D:/a_my_project/java-web/ch09/sql\")"
+    ]
+  }
+}

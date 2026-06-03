@@ -1,0 +1,35 @@
+<%-- 笔记行/卡片片段：需要 pageContext 中的 note 变量 --%>
+<c:set var="cardColor" value="${note.id mod 6}" />
+<a href="${pageContext.request.contextPath}/note/edit?id=${note.id}"
+   class="note-row note-card-item${note.isPinned ? ' is-pinned' : ''}"
+   data-note-id="${note.id}">
+    <div class="note-row-icon color-${cardColor}">
+        <i class="bi bi-file-earmark-text"></i>
+    </div>
+    <div class="note-row-body">
+        <div class="note-row-title">
+            <c:if test="${note.isPinned}"><i class="bi bi-pin-fill pin-badge"></i></c:if>
+            <span>${note.title}</span>
+        </div>
+        <div class="note-row-summary">
+            <c:choose>
+                <c:when test="${not empty note.summary}">${note.summary}</c:when>
+                <c:otherwise><span class="text-muted">暂无内容</span></c:otherwise>
+            </c:choose>
+        </div>
+    </div>
+    <div class="note-row-meta">
+        <span><fmt:formatDate value="${note.updatedAt}" pattern="MM-dd HH:mm"/></span>
+        <c:if test="${not empty note.folderName}">
+            <span class="note-folder-tag"><i class="bi bi-folder2"></i> ${note.folderName}</span>
+        </c:if>
+    </div>
+    <div class="note-row-actions">
+        <button type="button" title="收藏" onclick="event.preventDefault(); event.stopPropagation(); toggleFav(${note.id}, this);">
+            <i class="bi bi-star${note.isFavorite ? '-fill text-warning' : ''}"></i>
+        </button>
+        <button type="button" title="删除" onclick="event.preventDefault(); event.stopPropagation(); deleteNote(${note.id}, this);">
+            <i class="bi bi-trash"></i>
+        </button>
+    </div>
+</a>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fun.javierchen.noteapp.mapper.AttachmentMapper">
+
+    <resultMap id="AttachmentResultMap" type="fun.javierchen.noteapp.model.entity.Attachment">
+        <id property="id" column="id"/>
+        <result property="noteId" column="note_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="fileName" column="file_name"/>
+        <result property="filePath" column="file_path"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="fileType" column="file_type"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="fun.javierchen.noteapp.model.entity.Attachment"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO attachments (note_id, user_id, file_name, file_path, file_size, file_type, created_at)
+        VALUES (#{noteId}, #{userId}, #{fileName}, #{filePath}, #{fileSize}, #{fileType}, NOW())
+    </insert>
+
+    <select id="selectByNoteId" parameterType="long" resultMap="AttachmentResultMap">
+        SELECT id, note_id, user_id, file_name, file_path, file_size, file_type, created_at
+        FROM attachments
+        WHERE note_id = #{noteId}
+    </select>
+
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM attachments
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <!-- 开启驼峰命名自动映射 -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <!-- 开启日志（开发阶段可打开） -->
+        <!-- <setting name="logImpl" value="STDOUT_LOGGING"/> -->
+    </settings>
+
+    <typeAliases>
+        <package name="fun.javierchen.noteapp.model.entity"/>
+    </typeAliases>
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="fun.javierchen.noteapp.util.HikariDataSourceFactory">
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/note_app?useSSL=false&amp;serverTimezone=Asia/Shanghai&amp;characterEncoding=UTF-8"/>
+                <property name="username" value="root"/>
+                <property name="password" value="cjw2295cjw"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="mapper/UserMapper.xml"/>
+        <mapper resource="mapper/FolderMapper.xml"/>
+        <mapper resource="mapper/NoteMapper.xml"/>
+        <mapper resource="mapper/LinkMapper.xml"/>
+        <mapper resource="mapper/AttachmentMapper.xml"/>
+        <mapper resource="mapper/TagMapper.xml"/>
+    </mappers>
+</configuration>

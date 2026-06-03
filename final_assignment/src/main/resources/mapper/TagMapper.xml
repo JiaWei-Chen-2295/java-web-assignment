@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fun.javierchen.noteapp.mapper.TagMapper">
+
+    <resultMap id="TagResultMap" type="fun.javierchen.noteapp.model.entity.Tag">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="name" column="name"/>
+        <result property="color" column="color"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <select id="selectByUserId" parameterType="long" resultMap="TagResultMap">
+        SELECT id, user_id, name, color, created_at
+        FROM tags
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectById" parameterType="long" resultMap="TagResultMap">
+        SELECT id, user_id, name, color, created_at
+        FROM tags
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="fun.javierchen.noteapp.model.entity.Tag"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tags (user_id, name, color, created_at)
+        VALUES (#{userId}, #{name}, #{color}, NOW())
+    </insert>
+
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM tags
+        WHERE id = #{id}
+    </delete>
+
+    <insert id="insertNoteTag">
+        INSERT INTO note_tags (note_id, tag_id)
+        VALUES (#{noteId}, #{tagId})
+    </insert>
+
+    <delete id="deleteNoteTag">
+        DELETE FROM note_tags
+        WHERE note_id = #{noteId} AND tag_id = #{tagId}
+    </delete>
+
+    <delete id="deleteNoteTagsByNoteId" parameterType="long">
+        DELETE FROM note_tags
+        WHERE note_id = #{noteId}
+    </delete>
+
+    <select id="selectByNoteId" parameterType="long" resultMap="TagResultMap">
+        SELECT t.id, t.user_id, t.name, t.color, t.created_at
+        FROM tags t
+        INNER JOIN note_tags nt ON t.id = nt.tag_id
+        WHERE nt.note_id = #{noteId}
+    </select>
+
+</mapper>

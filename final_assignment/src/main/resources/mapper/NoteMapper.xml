@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fun.javierchen.noteapp.mapper.NoteMapper">
+
+    <resultMap id="NoteResultMap" type="fun.javierchen.noteapp.model.entity.Note">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="folderId" column="folder_id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="contentFormat" column="content_format"/>
+        <result property="summary" column="summary"/>
+        <result property="coverImage" column="cover_image"/>
+        <result property="isPinned" column="is_pinned"/>
+        <result property="isFavorite" column="is_favorite"/>
+        <result property="wordCount" column="word_count"/>
+        <result property="viewCount" column="view_count"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <sql id="allColumns">
+        id, user_id, folder_id, title, content, content_format, summary, cover_image,
+        is_pinned, is_favorite, word_count, view_count, sort_order, created_at, updated_at
+    </sql>
+
+    <select id="selectById" parameterType="long" resultMap="NoteResultMap">
+        SELECT <include refid="allColumns"/> FROM notes WHERE id = #{id}
+    </select>
+
+    <select id="selectByUserId" parameterType="long" resultMap="NoteResultMap">
+        SELECT <include refid="allColumns"/> FROM notes
+        WHERE user_id = #{userId}
+        ORDER BY is_pinned DESC, updated_at DESC
+    </select>
+
+    <select id="selectByFolderId" resultMap="NoteResultMap">
+        SELECT <include refid="allColumns"/> FROM notes
+        WHERE user_id = #{userId} AND folder_id = #{folderId}
+        ORDER BY is_pinned DESC, updated_at DESC
+    </select>
+
+    <select id="selectFavorites" parameterType="long" resultMap="NoteResultMap">
+        SELECT <include refid="allColumns"/> FROM notes
+        WHERE user_id = #{userId} AND is_favorite = 1
+        ORDER BY updated_at DESC
+    </select>
+
+    <select id="selectPinned" parameterType="long" resultMap="NoteResultMap">
+        SELECT <include refid="allColumns"/> FROM notes
+        WHERE user_id = #{userId} AND is_pinned = 1
+        ORDER BY updated_at DESC
+    </select>
+
+    <select id="selectRecent" resultMap="NoteResultMap">
+        SELECT <include refid="allColumns"/> FROM notes
+        WHERE user_id = #{userId}
+        ORDER BY updated_at DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectByTitle" resultMap="NoteResultMap">
+        SELECT <include refid="allColumns"/> FROM notes
+        WHERE user_id = #{userId} AND title = #{title}
+        LIMIT 1
+    </select>
+
+    <select id="searchByTitle" resultMap="NoteResultMap">
+        SELECT <include refid="allColumns"/> FROM notes
+        WHERE user_id = #{userId}
+          AND (title LIKE CONCAT('%', #{keyword}, '%')
+               OR content LIKE CONCAT('%', #{keyword}, '%'))
+        ORDER BY is_pinned DESC, updated_at DESC
+    </select>
+
+    <insert id="insert" parameterType="fun.javierchen.noteapp.model.entity.Note"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO notes (user_id, folder_id, title, content, content_format, summary,
+                           cover_image, is_pinned, is_favorite, word_count, sort_order,
+                           created_at, updated_at)
+        VALUES (#{userId}, #{folderId}, #{title}, #{content}, #{contentFormat}, #{summary},
+                #{coverImage}, #{isPinned}, #{isFavorite}, #{wordCount}, #{sortOrder},
+                NOW(), NOW())
+    </insert>
+
+    <update id="update" parameterType="fun.javierchen.noteapp.model.entity.Note">
+        UPDATE notes
+        SET title = #{title},
+            content = #{content},
+            content_format = #{contentFormat},
+            summary = #{summary},
+            cover_image = #{coverImage},
+            word_count = #{wordCount},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateContent">
+        UPDATE notes
+        SET title = #{title},
+            content = #{content},
+            summary = #{summary},
+            word_count = #{wordCount},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="togglePin">
+        UPDATE notes SET is_pinned = #{isPinned}, updated_at = NOW() WHERE id = #{id}
+    </update>
+
+    <update id="toggleFavorite">
+        UPDATE notes SET is_favorite = #{isFavorite}, updated_at = NOW() WHERE id = #{id}
+    </update>
+
+    <update id="moveToFolder">
+        UPDATE notes SET folder_id = #{folderId}, updated_at = NOW() WHERE id = #{id}
+    </update>
+
+    <update id="incrementViewCount" parameterType="long">
+        UPDATE notes SET view_count = view_count + 1 WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM notes WHERE id = #{id}
+    </delete>
+
+    <select id="countByUserId" parameterType="long" resultType="int">
+        SELECT COUNT(*) FROM notes WHERE user_id = #{userId}
+    </select>
+
+    <select id="countByFolderId" parameterType="long" resultType="int">
+        SELECT COUNT(*) FROM notes WHERE folder_id = #{folderId}
+    </select>
+
+</mapper>

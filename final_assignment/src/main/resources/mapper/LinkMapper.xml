@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fun.javierchen.noteapp.mapper.LinkMapper">
+
+    <resultMap id="NoteLinkResultMap" type="fun.javierchen.noteapp.model.entity.NoteLink">
+        <id property="id" column="id"/>
+        <result property="sourceId" column="source_id"/>
+        <result property="targetId" column="target_id"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <resultMap id="BacklinkDTOResultMap" type="fun.javierchen.noteapp.model.dto.BacklinkDTO">
+        <id property="id" column="id"/>
+        <result property="sourceId" column="source_id"/>
+        <result property="targetId" column="target_id"/>
+        <result property="sourceTitle" column="source_title"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <resultMap id="ForwardLinkDTOResultMap" type="fun.javierchen.noteapp.model.dto.ForwardLinkDTO">
+        <id property="id" column="id"/>
+        <result property="sourceId" column="source_id"/>
+        <result property="targetId" column="target_id"/>
+        <result property="targetTitle" column="target_title"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <insert id="insertLink">
+        INSERT INTO note_links (source_id, target_id, created_at)
+        VALUES (#{sourceId}, #{targetId}, NOW())
+    </insert>
+
+    <delete id="deleteBySourceId" parameterType="long">
+        DELETE FROM note_links
+        WHERE source_id = #{sourceId}
+    </delete>
+
+    <delete id="deleteByTargetId" parameterType="long">
+        DELETE FROM note_links
+        WHERE target_id = #{targetId}
+    </delete>
+
+    <select id="selectBacklinks" parameterType="long" resultMap="BacklinkDTOResultMap">
+        SELECT nl.id, nl.source_id, nl.target_id, n.title AS source_title, nl.created_at
+        FROM note_links nl
+        INNER JOIN notes n ON nl.source_id = n.id
+        WHERE nl.target_id = #{targetId}
+    </select>
+
+    <select id="selectBySourceId" parameterType="long" resultMap="NoteLinkResultMap">
+        SELECT id, source_id, target_id, created_at
+        FROM note_links
+        WHERE source_id = #{sourceId}
+    </select>
+
+    <select id="selectForwardLinks" parameterType="long" resultMap="ForwardLinkDTOResultMap">
+        SELECT nl.id, nl.source_id, nl.target_id, n.title AS target_title, nl.created_at
+        FROM note_links nl
+        INNER JOIN notes n ON nl.target_id = n.id
+        WHERE nl.source_id = #{sourceId}
+        ORDER BY nl.created_at DESC
+    </select>
+
+</mapper>

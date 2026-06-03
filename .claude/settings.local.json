@@ -3,7 +3,16 @@
     "allow": [
       "Bash(mkdir -p \"D:/a_my_project/java-web/ch09/src/main/java/fun/javierchen/ch09\")",
       "Bash(mkdir -p \"D:/a_my_project/java-web/ch09/src/main/webapp/WEB-INF\")",
-      "Bash(mkdir -p \"D:/a_my_project/java-web/ch09/sql\")"
+      "Bash(mkdir -p \"D:/a_my_project/java-web/ch09/sql\")",
+      "Bash(mvn compile *)",
+      "Bash(mvn help:effective-pom)",
+      "Bash(mvn package *)",
+      "Bash(python *)",
+      "Bash(where catalina *)",
+      "Bash(where catalina.bat)",
+      "Read(//c/Users/16010/.m2/repository/org/apache/tomcat//**)",
+      "Bash(mkdir -p \"D:/a_my_project/java-web/ch15-circle/src/main/java/fun/javierchen/ch15circle\")",
+      "Bash(mkdir -p \"D:/a_my_project/java-web/ch15-circle/src/main/webapp/WEB-INF\")"
     ]
   }
 }

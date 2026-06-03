@@ -1,0 +1,290 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%-- Debug Floating Panel --%>
+<style>
+  .debug-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--gray-800);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-lg);
+    z-index: 9999;
+    transition: all 0.2s;
+  }
+  .debug-toggle:hover {
+    background: var(--primary);
+    transform: scale(1.05);
+  }
+  .debug-panel {
+    position: fixed;
+    bottom: 76px;
+    right: 20px;
+    width: 360px;
+    max-height: 70vh;
+    background: var(--gray-900);
+    color: #e8eaed;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    z-index: 9998;
+    overflow: hidden;
+    display: none;
+    font-size: 13px;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  }
+  .debug-panel.open {
+    display: flex;
+    flex-direction: column;
+    animation: debugSlideUp 0.2s ease;
+  }
+  @keyframes debugSlideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .debug-panel-header {
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .debug-panel-header span {
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gray-400);
+  }
+  .debug-panel-body {
+    padding: 12px 16px;
+    overflow-y: auto;
+    max-height: calc(70vh - 44px);
+  }
+  .debug-section {
+    margin-bottom: 16px;
+  }
+  .debug-section:last-child {
+    margin-bottom: 0;
+  }
+  .debug-section-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--primary);
+    font-weight: 700;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .debug-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    line-height: 1.5;
+  }
+  .debug-key {
+    color: var(--gray-400);
+  }
+  .debug-val {
+    color: #fff;
+    text-align: right;
+    max-width: 180px;
+    word-break: break-all;
+  }
+  .debug-val.mono {
+    font-size: 11px;
+    opacity: 0.8;
+  }
+  .debug-tag {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .debug-tag.yes {
+    background: rgba(13, 144, 79, 0.25);
+    color: #5bb98c;
+  }
+  .debug-tag.no {
+    background: rgba(197, 34, 31, 0.25);
+    color: #e57373;
+  }
+  .debug-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .debug-table th {
+    text-align: left;
+    padding: 4px 6px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--gray-500);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .debug-table td {
+    padding: 4px 6px;
+    font-size: 12px;
+    color: var(--gray-300);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    word-break: break-all;
+  }
+  .debug-table tr:last-child td {
+    border-bottom: none;
+  }
+</style>
+
+<button class="debug-toggle" onclick="toggleDebugPanel()" title="切换调试信息">&#x1F41E;</button>
+
+<div class="debug-panel" id="debugPanel">
+  <div class="debug-panel-header">
+    <span>调试信息</span>
+    <span style="font-size:11px; color:var(--gray-500);">ch11-login-keeper</span>
+  </div>
+  <div class="debug-panel-body">
+    <%-- Session Info --%>
+    <div class="debug-section">
+      <div class="debug-section-title">会话</div>
+      <div class="debug-row">
+        <span class="debug-key">会话 ID</span>
+        <span class="debug-val mono"><%= session.getId().substring(0, Math.min(12, session.getId().length())) %>...</span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-key">创建时间</span>
+        <span class="debug-val"><%= new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date(session.getCreationTime())) %></span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-key">最大空闲</span>
+        <span class="debug-val"><%= session.getMaxInactiveInterval() %> 秒</span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-key">用户名</span>
+        <span class="debug-val"><%= session.getAttribute("username") != null ? session.getAttribute("username") : "无" %></span>
+      </div>
+    </div>
+
+    <%-- Cookie Info --%>
+    <div class="debug-section">
+      <div class="debug-section-title">Cookie: userLogin</div>
+      <%
+        Cookie[] dbgCookies = request.getCookies();
+        Cookie dbgCookie = null;
+        if (dbgCookies != null) {
+          for (Cookie c : dbgCookies) {
+            if ("userLogin".equals(c.getName())) { dbgCookie = c; break; }
+          }
+        }
+      %>
+      <% if (dbgCookie != null) { %>
+      <div class="debug-row">
+        <span class="debug-key">值</span>
+        <span class="debug-val"><%= dbgCookie.getValue() %></span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-key">最大存活</span>
+        <span class="debug-val"><%= dbgCookie.getMaxAge() %> 秒</span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-key">路径</span>
+        <span class="debug-val"><%= dbgCookie.getPath() %></span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-key">HttpOnly</span>
+        <span class="debug-val"><span class="debug-tag <%= dbgCookie.isHttpOnly() ? "yes" : "no" %>"><%= dbgCookie.isHttpOnly() ? "是" : "否" %></span></span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-key">Secure</span>
+        <span class="debug-val"><span class="debug-tag <%= dbgCookie.getSecure() ? "yes" : "no" %>"><%= dbgCookie.getSecure() ? "是" : "否" %></span></span>
+      </div>
+      <% } else { %>
+      <div class="debug-row">
+        <span class="debug-key">状态</span>
+        <span class="debug-val" style="color:var(--gray-500);">未设置</span>
+      </div>
+      <% } %>
+    </div>
+
+    <%-- Countdown --%>
+    <% if (session.getAttribute("cookieCreatedAt") != null) { %>
+    <div class="debug-section">
+      <div class="debug-section-title">Cookie 倒计时</div>
+      <div class="debug-row">
+        <span class="debug-key">剩余时间</span>
+        <span class="debug-val" id="debugCountdown" style="color:#5bb98c; font-weight:700;">--</span>
+      </div>
+    </div>
+    <% } %>
+
+    <%-- All Cookies --%>
+    <div class="debug-section">
+      <div class="debug-section-title">全部 Cookie（<%= dbgCookies != null ? dbgCookies.length : 0 %> 个）</div>
+      <% if (dbgCookies != null && dbgCookies.length > 0) { %>
+      <table class="debug-table">
+        <tr><th>名称</th><th>值</th></tr>
+        <% for (Cookie c : dbgCookies) { %>
+        <tr>
+          <td><%= c.getName() %></td>
+          <td><%= c.getValue() %></td>
+        </tr>
+        <% } %>
+      </table>
+      <% } else { %>
+      <div style="color:var(--gray-500); font-size:12px;">无 Cookie</div>
+      <% } %>
+    </div>
+
+    <%-- Request Info --%>
+    <div class="debug-section">
+      <div class="debug-section-title">请求</div>
+      <div class="debug-row">
+        <span class="debug-key">方法</span>
+        <span class="debug-val"><%= request.getMethod() %></span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-key">URI</span>
+        <span class="debug-val mono"><%= request.getRequestURI() %></span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-key">远端地址</span>
+        <span class="debug-val mono"><%= request.getRemoteAddr() %></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleDebugPanel() {
+  document.getElementById('debugPanel').classList.toggle('open');
+}
+
+<% if (session.getAttribute("cookieCreatedAt") != null) { %>
+(function() {
+  var createdAt = <%= session.getAttribute("cookieCreatedAt") %>;
+  var maxAge = <%= session.getAttribute("cookieMaxAge") != null ? session.getAttribute("cookieMaxAge") : 300 %>;
+  function updateCountdown() {
+    var elapsed = Math.floor((Date.now() - createdAt) / 1000);
+    var remaining = Math.max(0, maxAge - elapsed);
+    var min = Math.floor(remaining / 60);
+    var sec = remaining % 60;
+    var el = document.getElementById('debugCountdown');
+    if (el) {
+      el.textContent = min + ':' + (sec < 10 ? '0' : '') + sec;
+      if (remaining <= 30) el.style.color = '#e57373';
+      else if (remaining <= 60) el.style.color = '#f0a830';
+    }
+    if (remaining > 0) setTimeout(updateCountdown, 1000);
+  }
+  updateCountdown();
+})();
+<% } %>
+</script>

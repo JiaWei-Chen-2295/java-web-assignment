@@ -168,9 +168,9 @@
         
         <div class="image-section">
             <h3 style="color: #555; margin-bottom: 15px;">Included Image (Static)</h3>
-            <%@ include file="images/static-image.jpg" %>
+            <img src="images/static-image.jpg" alt="Static Include Image" style="max-width: 100%; height: auto; border-radius: 4px; margin-bottom: 15px;">
             <p style="color: #666; margin-top: 15px; font-style: italic;">
-                This image is included using static include directive - the binary content is embedded at translation time
+                This image is referenced as a normal static resource. The page layout (header/student info) uses static include.
             </p>
         </div>
         
@@ -182,8 +182,8 @@
 &lt;%-- Static include: student info (student ID, name, current time) --%&gt;
 <span class="highlight">&lt;%@ include file="student-info.jspf" %&gt;</span>
 
-&lt;%-- Including image file statically --%&gt;
-<span class="highlight">&lt;%@ include file="images/static-image.jpg" %&gt;</span>
+&lt;%-- Image as static resource reference --%&gt;
+&lt;img src="images/static-image.jpg" ... /&gt;
         </div>
         
         <h3 style="color: #555; margin: 30px 0 15px 0;">Key Characteristics:</h3>

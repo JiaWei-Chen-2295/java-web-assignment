@@ -1,0 +1,86 @@
+# ============================================
+# JavaWeb 作业展示 - 模块配置
+# 新增/修改模块只需编辑此文件，无需改动代码
+# ============================================
+
+groups:
+  - label: "基础 Servlet"
+    items:
+      - id: ch01
+        title: "ch01 - 第一个 Servlet"
+        desc: "第一个 Servlet"
+        url: "/ch01/welcome"
+
+      - id: ch02
+        title: "ch02 - 表单处理"
+        desc: "表单处理 Servlet"
+        url: "/ch02"
+
+  - label: "请求与响应"
+    items:
+      - id: ch04
+        title: "ch04 - 登录"
+        desc: "登录 Servlet"
+        url: "/ch04/login.jsp"
+
+      - id: ch05
+        title: "ch05 - 注册登录"
+        desc: "用户注册与登录"
+        url: "/ch05/register.html"
+
+      - id: ch06
+        title: "ch06 - 文件上传"
+        desc: "文件上传"
+        url: "/ch06"
+
+  - label: "转发与重定向"
+    items:
+      - id: ch07
+        title: "ch07 - 重定向与刷新"
+        desc: "重定向与时间刷新"
+        url: "/ch07"
+
+  - label: "错误处理"
+    items:
+      - id: ch08
+        title: "ch08 - 错误页面"
+        desc: "errorPage 示例"
+        url: "/ch08/trigger500.jsp"
+
+  - label: "会话管理"
+    items:
+      - id: ch09
+        title: "ch09 - Cookie 与注册"
+        desc: "用户注册登录 + Cookie"
+        url: "/ch09/index.jsp"
+
+      - id: ch10
+        title: "ch10 - Cookie 自动登录"
+        desc: "Cookie 自动登录"
+        url: "/ch10/welcome.jsp"
+
+  - label: "JSP 基础"
+    items:
+      - id: "01-hello"
+        title: "01 - Hello JSP"
+        desc: "第一个 JSP 模块"
+        url: "/01-first-module"
+
+      - id: jsp-directive
+        title: "JSP 指令"
+        desc: "JSP 指令与包含"
+        url: "/JSP-directive"
+
+  - label: "数据库操作"
+    items:
+      - id: ch18
+        title: "ch18 - JDBC 用户列表"
+        desc: "JDBC + Servlet 查询 users 表"
+        url: "/ch18-jdbc-users"
+
+  - label: "Spring"
+    items:
+      - id: spring
+        title: "Spring Web"
+        desc: "Spring MVC 示例"
+        url: "/spring"

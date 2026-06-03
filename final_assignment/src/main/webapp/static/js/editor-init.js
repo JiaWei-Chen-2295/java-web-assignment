@@ -119,6 +119,10 @@
             if (window.EditorWikiLink && window.EditorWikiLink.refreshPanels) {
                 window.EditorWikiLink.refreshPanels(noteId);
             }
+            /* 保存完成后全量渲染 wiki-link（此时编辑器无焦点，安全操作） */
+            if (window.EditorWikiLink && window.EditorWikiLink.decorateAllSafe) {
+                window.EditorWikiLink.decorateAllSafe();
+            }
         })
         .catch(function (err) {
             console.error('Save failed:', err);
@@ -215,10 +219,14 @@
                 },
                 quote: {
                     class: Quote,
-                    inlineToolbar: true
+                    inlineToolbar: true,
+                    config: {
+                        quotePlaceholder: '输入引用内容...',
+                        captionPlaceholder: '输入引用来源...'
+                    }
                 },
                 code: {
-                    class: CodeTool
+                    class: EnhancedCodeTool
                 },
                 delimiter: Delimiter,
                 image: {
@@ -242,15 +250,19 @@
             onChange: function () {
                 scheduleSave();
                 dispatchContentChanged();
-                if (window.EditorSlash && window.EditorSlash.onChange) {
-                    window.EditorSlash.onChange();
-                }
-                if (window.EditorBlockUI && window.EditorBlockUI.refresh) {
-                    window.EditorBlockUI.refresh();
-                }
-                if (window.EditorWikiLink && window.EditorWikiLink.onEditorChange) {
-                    window.EditorWikiLink.onEditorChange();
-                }
+                /* 合并刷新：延迟 150ms 后统一执行，避免每次 keystroke 都触发多个刷新 */
+                clearTimeout(window._editorRefreshTimer);
+                window._editorRefreshTimer = setTimeout(function () {
+                    if (window.EditorSlash && window.EditorSlash.onChange) {
+                        window.EditorSlash.onChange();
+                    }
+                    if (window.EditorBlockUI && window.EditorBlockUI.refresh) {
+                        window.EditorBlockUI.refresh();
+                    }
+                    if (window.EditorWikiLink && window.EditorWikiLink.onEditorChange) {
+                        window.EditorWikiLink.onEditorChange();
+                    }
+                }, 150);
                 var tips = document.getElementById('editorTips');
                 if (tips) tips.style.display = 'none';
             },

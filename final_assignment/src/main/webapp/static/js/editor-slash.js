@@ -13,7 +13,7 @@
         { label: '有序列表', desc: '编号列表', type: 'list', config: { style: 'ordered', meta: { start: 1, counterType: 'numeric' }, items: [{ content: '', meta: {}, items: [] }] } },
         { label: '待办', desc: '任务清单', type: 'list', config: { style: 'checklist', items: [{ content: '', meta: { checked: false }, items: [] }] } },
         { label: '引用', desc: '引用块', type: 'quote', config: { text: '', caption: '' } },
-        { label: '代码', desc: '代码块', type: 'code', config: { code: '' } },
+        { label: '代码', desc: '代码块', type: 'code', config: { code: '', language: '' } },
         { label: '分割线', desc: '分隔内容', type: 'delimiter', config: {} },
         { label: '引用笔记', desc: '链接到另一篇文档', type: 'wikilink', config: {} }
     ];
@@ -93,8 +93,12 @@
         var sel = window.getSelection();
         if (sel && sel.rangeCount) {
             var rect = sel.getRangeAt(0).getBoundingClientRect();
-            menu.style.top = (rect.bottom + 6) + 'px';
-            menu.style.left = Math.min(rect.left, window.innerWidth - 300) + 'px';
+            if (global.EditorPosition) {
+                global.EditorPosition.place(menu, rect, { width: 300, maxHeight: 320, gap: 6 });
+            } else {
+                menu.style.top = (rect.bottom + 6) + 'px';
+                menu.style.left = Math.min(rect.left, global.innerWidth - 300) + 'px';
+            }
         }
 
         menu.querySelectorAll('.slash-menu-item').forEach(function (el, i) {
@@ -197,7 +201,8 @@
 
     function bind(holder) {
         holderEl = holder;
-        holder.addEventListener('keyup', onInputCheck);
+        /* 用 input 事件替代 keyup，让斜杠菜单响应更即时 */
+        holder.addEventListener('input', onInputCheck);
         holder.addEventListener('click', function () {
             setTimeout(onInputCheck, 0);
         });

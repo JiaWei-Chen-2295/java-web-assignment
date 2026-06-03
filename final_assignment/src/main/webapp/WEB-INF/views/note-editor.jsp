@@ -175,6 +175,7 @@
 <script src="${pageContext.request.contextPath}/static/js/vendor/editorjs/delimiter.min.js"></script>
 
 <script src="${pageContext.request.contextPath}/static/js/markdown-to-editorjs.js"></script>
+<script src="${pageContext.request.contextPath}/static/js/editor-code-enhanced.js"></script>
 <script src="${pageContext.request.contextPath}/static/js/app-shell.js"></script>
 <script src="${pageContext.request.contextPath}/static/js/editor-init.js"></script>
 <script src="${pageContext.request.contextPath}/static/js/editor-keyboard.js"></script>

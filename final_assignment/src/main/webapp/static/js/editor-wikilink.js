@@ -106,39 +106,50 @@
         ));
     }
 
-    function decorateEditable(el) {
-        if (!el || el.dataset.wikiDecorating === '1') return;
-        var html = el.innerHTML;
-        if (!html || html.indexOf('[[') === -1) return;
-        if (html.indexOf('wiki-link') !== -1 && html.indexOf('[[') === -1) return;
-
-        el.dataset.wikiDecorating = '1';
-        var sel = window.getSelection();
-        var hadFocus = document.activeElement === el;
-        var saved = null;
-        if (hadFocus && sel && sel.rangeCount) {
-            saved = { start: sel.getRangeAt(0).cloneRange() };
+    /** 编辑态下不做 innerHTML 替换，只标记含 [[…]] 的块 */
+    function markWikiEditable(el) {
+        if (!el) return;
+        var text = el.textContent || '';
+        if (text.indexOf('[[') !== -1) {
+            el.dataset.hasWikiLink = '1';
+        } else {
+            delete el.dataset.hasWikiLink;
         }
-
-        el.innerHTML = bracketToHtml(html);
-
-        if (saved && hadFocus) {
-            try {
-                sel.removeAllRanges();
-                sel.addRange(saved.start);
-            } catch (e) { /* ignore */ }
-        }
-        delete el.dataset.wikiDecorating;
     }
 
-    function decorateAll() {
+    /** 全量标记（编辑态使用，不修改 innerHTML） */
+    function markAllWiki() {
         if (!holderEl) return;
         holderEl.querySelectorAll('.ce-block').forEach(function (block) {
-            getBlockEditables(block).forEach(decorateEditable);
+            getBlockEditables(block).forEach(markWikiEditable);
         });
     }
 
-    /** 计算点击处在 contenteditable 纯文本中的偏移 */
+    /** 块失焦时安全渲染该块的 wiki-link（单块局部渲染） */
+    function decorateOnBlur(blockEl) {
+        if (!blockEl) return;
+        getBlockEditables(blockEl).forEach(decorateEditable);
+    }
+
+    function onEditorChange() {
+        clearTimeout(decorateTimer);
+        decorateTimer = setTimeout(markAllWiki, 300);
+    }
+
+    /** 安全渲染 wiki-link：只在块不处于编辑焦点时做 innerHTML 替换 */
+    function decorateEditable(el) {
+        if (!el) return;
+        var html = el.innerHTML;
+        if (!html || html.indexOf('[[') === -1) return;
+        /* 如果该块正在被编辑（有焦点），不做 innerHTML 替换，只标记 */
+        if (document.activeElement === el) {
+            markWikiEditable(el);
+            return;
+        }
+        el.dataset.wikiDecorating = '1';
+        el.innerHTML = bracketToHtml(html);
+        delete el.dataset.wikiDecorating;
+    }
     function offsetAtPoint(editable, clientX, clientY) {
         var node = null;
         var offset = 0;
@@ -212,11 +223,6 @@
         if (editable && holderEl.contains(editable)) {
             tryNavigatePlainWiki(e, editable);
         }
-    }
-
-    function onEditorChange() {
-        clearTimeout(decorateTimer);
-        decorateTimer = setTimeout(decorateAll, 300);
     }
 
     function navigateToNote(title, noteId) {
@@ -309,8 +315,12 @@
             menu.appendChild(item);
         });
         menu.style.display = 'block';
-        menu.style.top = (rect.bottom + window.scrollY + 6) + 'px';
-        menu.style.left = Math.min(rect.left, window.innerWidth - 280) + 'px';
+        if (global.EditorPosition) {
+            global.EditorPosition.place(menu, rect, { width: 280, maxHeight: 240, gap: 6 });
+        } else {
+            menu.style.top = (rect.bottom + 6) + 'px';
+            menu.style.left = Math.min(rect.left, global.innerWidth - 280) + 'px';
+        }
     }
 
     function hideSuggestions() {
@@ -434,7 +444,7 @@
         if (idx < 0) idx = api.getBlocksCount() - 1;
         api.insert('paragraph', { text: linkText }, {}, idx + 1, true);
         onEditorChange();
-        if (global.NoteEditor.save) global.NoteEditor.save();
+        if (global.NoteEditor && global.NoteEditor.save) global.NoteEditor.save();
         if (global.showToast) global.showToast('已插入引用', 'success');
     }
 
@@ -522,6 +532,25 @@
             }
         }, true);
 
+        /* 块失焦时才渲染该块的 wiki-link（避免编辑态 innerHTML 闪动） */
+        holder.addEventListener('focusout', function (e) {
+            var editable = e.target.closest && e.target.closest('[contenteditable="true"]');
+            if (!editable || !holder.contains(editable)) return;
+            /* 延迟执行，确保新焦点已转移 */
+            setTimeout(function () {
+                var blockEl = editable.closest('.ce-block');
+                if (blockEl) decorateOnBlur(blockEl);
+            }, 60);
+        }, true);
+
+        /* 初始加载时全量渲染 wiki-link（此时编辑器尚未聚焦，安全操作） */
+        setTimeout(function () {
+            if (!holderEl) return;
+            holderEl.querySelectorAll('.ce-block').forEach(function (block) {
+                getBlockEditables(block).forEach(decorateEditable);
+            });
+        }, 500);
+
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 hideSuggestions();
@@ -535,10 +564,17 @@
             }
         });
 
-        setTimeout(decorateAll, 500);
         if (global.NoteEditor && global.NoteEditor.getNoteId()) {
             refreshPanels(global.NoteEditor.getNoteId());
         }
+    }
+
+    /** 保存完成后全量渲染 wiki-link（此时编辑器无焦点，安全） */
+    function decorateAllSafe() {
+        if (!holderEl) return;
+        holderEl.querySelectorAll('.ce-block').forEach(function (block) {
+            getBlockEditables(block).forEach(decorateEditable);
+        });
     }
 
     global.EditorWikiLink = {
@@ -548,7 +584,8 @@
         normalizeOutput: normalizeOutput,
         onEditorChange: onEditorChange,
         refreshPanels: refreshPanels,
-        navigate: navigateToNote
+        navigate: navigateToNote,
+        decorateAllSafe: decorateAllSafe
     };
 
     document.addEventListener('wikilink-inserted', function (e) {

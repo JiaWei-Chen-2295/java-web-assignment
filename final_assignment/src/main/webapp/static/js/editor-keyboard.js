@@ -137,7 +137,7 @@
             } else {
                 focusBlock(index);
             }
-            if (global.NoteEditor.save) global.NoteEditor.save();
+            /* 不手动 save()，onChange 已自动触发 scheduleSave */
         });
     }
 
@@ -152,7 +152,7 @@
             return;
         }
         api.delete(idx);
-        if (global.NoteEditor.save) global.NoteEditor.save();
+        /* 不手动 save()，onChange 已自动触发 scheduleSave */
         if (global.showToast) global.showToast('已删除块', 'success');
     }
 
@@ -166,7 +166,6 @@
             if (global.showToast) global.showToast('已转为正文', 'success');
         });
     }
-
     function toggleListStyle() {
         var api = getApi();
         var ed = global.NoteEditor.getEditor();
@@ -188,7 +187,7 @@
             return ed.render(data);
         }).then(function () {
             focusBlock(idx);
-            if (global.NoteEditor.save) global.NoteEditor.save();
+            /* 不手动 save()，onChange 已自动触发 scheduleSave */
             if (global.showToast) {
                 global.showToast('已切换列表类型', 'success');
             }
@@ -266,7 +265,7 @@
                 var idx = api.getCurrentBlockIndex();
                 api.insert(undefined, { text: '' }, {}, idx + 1, true);
                 focusBlock(idx + 1);
-                if (global.NoteEditor.save) global.NoteEditor.save();
+                /* onChange 自动触发 scheduleSave，无需手动 save */
             }
         }
     }

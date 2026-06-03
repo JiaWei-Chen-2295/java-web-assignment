@@ -107,10 +107,19 @@
 
     function observeBlocks() {
         if (!holderEl) return;
-        var observer = new MutationObserver(function () {
-            refreshAllRails();
+        /* 只监听块增删（childList），不监听 subtree，避免输入时的文本变化触发全量刷新 */
+        var observer = new MutationObserver(function (mutations) {
+            var hasBlockChange = false;
+            mutations.forEach(function (m) {
+                if (m.type === 'childList') {
+                    hasBlockChange = true;
+                }
+            });
+            if (hasBlockChange) {
+                refreshAllRails();
+            }
         });
-        observer.observe(holderEl, { childList: true, subtree: true });
+        observer.observe(holderEl, { childList: true, subtree: false });
         refreshAllRails();
     }
 

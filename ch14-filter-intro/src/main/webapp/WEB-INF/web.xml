@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <display-name>ch14-filter-intro</display-name>
+
+    <filter>
+        <filter-name>CircleFilter</filter-name>
+        <filter-class>fun.javierchen.ch14filter.CircleFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CircleFilter</filter-name>
+        <url-pattern>/circle</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>fun.javierchen.ch14filter.EncodingFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/reg</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>ResValidatorFilter</filter-name>
+        <filter-class>fun.javierchen.ch14filter.ResValidatorFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>ResValidatorFilter</filter-name>
+        <url-pattern>/register</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>LoginValidatorFilter</filter-name>
+        <filter-class>fun.javierchen.ch14filter.demo.filter.LoginValidatorFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>LoginValidatorFilter</filter-name>
+        <url-pattern>/login</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>PermissionFilter</filter-name>
+        <filter-class>fun.javierchen.ch14filter.demo.filter.PermissionFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>PermissionFilter</filter-name>
+        <url-pattern>/admin/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>PermissionFilter</filter-name>
+        <url-pattern>/user/*</url-pattern>
+    </filter-mapping>
+
+    <servlet>
+        <servlet-name>CircleServlet</servlet-name>
+        <servlet-class>fun.javierchen.ch14filter.CircleServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CircleServlet</servlet-name>
+        <url-pattern>/circle</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RegServler</servlet-name>
+        <servlet-class>fun.javierchen.ch14filter.RegServler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegServler</servlet-name>
+        <url-pattern>/reg</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>fun.javierchen.ch14filter.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/register</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>fun.javierchen.ch14filter.controller.LoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>fun.javierchen.ch14filter.controller.LogoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+</web-app>
